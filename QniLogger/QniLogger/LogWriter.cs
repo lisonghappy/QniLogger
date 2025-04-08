@@ -40,13 +40,15 @@ namespace Qni {
                 }
             }
             else {
-                string prefix = DateTime.Now.ToString("yyyyMMdd@HH-mm-ss-fff");
-                string path = Path.Combine(cacheDir, prefix, cacheFileName);
+                string prefix = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                var fileName = string.Format("{0}@{1}", prefix,cacheFileName);
+                string filPath = Path.Combine(cacheDir, fileName);
+
                 try {
                     if (!Directory.Exists(cacheDir)) {
                         Directory.CreateDirectory(cacheDir);
                     }
-                    fileWriter = File.AppendText(path);
+                    fileWriter = File.AppendText(filPath);
                     fileWriter.AutoFlush = true;
                 }
                 catch (Exception) {
