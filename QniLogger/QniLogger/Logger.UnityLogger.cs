@@ -1,24 +1,30 @@
 ﻿using System;
+using System.Reflection;
 
-namespace Qni {
-    public class UnityLogger : ILogger {
-        private readonly Type type = Type.GetType("UnityEngine.Debug, UnityEngine");
+namespace Qni
+{
+    internal class UnityLogger : ILogger {
+        private static readonly Type type = Type.GetType("UnityEngine.Debug, UnityEngine");
+        private static readonly MethodInfo logMethod = type.GetMethod("Log", new Type[] { typeof(object) });
+        private static readonly MethodInfo logWarningMethod = type.GetMethod("LogWarning", new Type[] { typeof(object) });
+        private static readonly MethodInfo logErrorMethod = type.GetMethod("LogError", new Type[] { typeof(object) });
 
         public void Log (string msg, ELogColor logColor = ELogColor.None) {
-            msg = ColorfulMsg(msg, logColor);
-            type.GetMethod("Log", new Type[] { typeof(object) }).Invoke(null, new object[] { msg });
+            msg = MsgColorful(msg, logColor);
+            logMethod?.Invoke(null, new object[] { msg });
         }
 
         public void LogWarning (string msg) {
-            type.GetMethod("LogWarning", new Type[] { typeof(object) }).Invoke(null, new object[] { msg });
-
+            msg = MsgColorful(msg, ELogColor.Yellow);
+            logWarningMethod?.Invoke(null, new object[] { msg });
         }
 
         public void LogError (string msg) {
-            type.GetMethod("LogError", new Type[] { typeof(object) }).Invoke(null, new object[] { msg });
+            msg = MsgColorful(msg, ELogColor.Red);
+            logErrorMethod?.Invoke(null, new object[] { msg });
         }
 
-        private string ColorfulMsg (string msg, ELogColor logColor = ELogColor.None) {
+        private string MsgColorful (string msg, ELogColor logColor = ELogColor.None) {
             var _colorVal = "";
             switch (logColor) {
                 case ELogColor.Red:
@@ -37,7 +43,7 @@ namespace Qni {
                     _colorVal = "FF00FFFF";
                     break;
                 case ELogColor.Yellow:
-                    _colorVal = "FFFF00FF";
+                    _colorVal = "CC9A06FF";
                     break;
                 case ELogColor.White:
                     _colorVal = "FFFFFFFF";
@@ -57,7 +63,7 @@ namespace Qni {
                 return msg;
             }
             else {
-                return string.Format("<color={0}{1}</color>>", _colorVal, msg);
+                return string.Format("<color=#{0}>{1}</color>", _colorVal, msg);
             }
         }
     }

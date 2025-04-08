@@ -1,78 +1,66 @@
 ﻿using System;
-using System.Drawing;
 
 namespace Qni {
-    public class ConsoleLogger : ILogger {
+
+    internal class ConsoleLogger : ILogger {
         public ConsoleLogger () {
         }
 
 
         public void Log (string msg, ELogColor logColor = ELogColor.None) {
-            WriteConsoleLog(msg, logColor);
+            ConsoleLog(msg, logColor);
         }
 
         public void LogWarning (string msg) {
-            WriteConsoleLog(msg, ELogColor.Yellow);
+            ConsoleLog(msg, ELogColor.Yellow);
         }
 
         public void LogError (string msg) {
-            WriteConsoleLog(msg, ELogColor.Red);
+            ConsoleLog(msg, ELogColor.Red);
         }
 
 
-        private void WriteConsoleLog (string msg, ELogColor color) {
-                var _color = Console.ForegroundColor;
+        private void ConsoleLog (string msg, ELogColor color) {
+            var _beforeColor = Console.ForegroundColor;
+            var _newColor = _beforeColor;
+
             switch (color) {
                 case ELogColor.Red:
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.DarkRed;
                     break;
                 case ELogColor.Green:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.Green;
                     break;
                 case ELogColor.Blue:
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.Blue;
                     break;
                 case ELogColor.Cyan:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.Cyan;
                     break;
                 case ELogColor.Magenta:
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.Magenta;
                     break;
                 case ELogColor.Yellow:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.DarkYellow;
                     break;
                 case ELogColor.White:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.White;
                     break;
                 case ELogColor.Gray:
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.Gray;
                     break;
                 case ELogColor.Black:
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.WriteLine(msg);
-                    Console.ForegroundColor = _color;
+                    _newColor = ConsoleColor.Black;
                     break;
                 case ELogColor.None:
                 default:
-                    Console.WriteLine(msg);
                     break;
             }
+
+
+            Console.ForegroundColor = _newColor;
+            Console.WriteLine(msg);
+            Console.ForegroundColor = _beforeColor;
         }
     }
 }

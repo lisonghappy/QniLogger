@@ -1,16 +1,15 @@
 ﻿using System;
 namespace Qni {
-	public class LogConfig
-	{
-		/// <summary>
-		/// enable logger
-		/// </summary>
-		public bool enable = true;
+    public class LogConfig {
+        /// <summary>
+        /// enable logger
+        /// </summary>
+        public bool enable = true;
 
-		/// <summary>
-		/// enable logger to write date.
-		/// </summary>
-		public bool enableTime = true;
+        /// <summary>
+        /// enable logger to write date.
+        /// </summary>
+        public bool enableTime = true;
         /// <summary>
         /// enable logger to write UTC date.
         /// </summary>
@@ -33,13 +32,13 @@ namespace Qni {
 		public bool enableCacheCover = true;
 
 
-		public string logPrefix = "#";
-		public string logSeparator = ">";
-		public string cacheFileDir = "";
-		public string cacheFileName = "Log.txt";
+        public string logPrefix = "";
+        public string logSeparator = "";
+        public string cacheFileDir = "";
+        public string cacheFileName = "log.txt";
 
 
-		public static string DefalutCacheFileDir(ELogChannel channel) {
+        public static string DefalutCacheFileDir (ELogChannel channel) {
             if (channel == ELogChannel.Console) {
                 return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
             }

@@ -58,18 +58,18 @@ namespace Qni {
             var _msg = LogPackaging(msg.ToString(), logConfig.enableTrace);
             lock (QNI_LOGGER_LOCK) {
                 logger.Log(_msg);
-                WriteLogMsgToLocal("Log", _msg);
+                CacheLogMsg("Log", _msg);
             }
         }
 
-        public static void Log (string msg, params object[] args) {
+        public static void Log (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
-            var _msg = LogPackaging(string.Format(msg, args), logConfig.enableTrace);
+            var _msg = LogPackaging(string.Format(format, args), logConfig.enableTrace);
             lock (QNI_LOGGER_LOCK) {
                 logger.Log(_msg);
-                WriteLogMsgToLocal("Log", _msg);
+                CacheLogMsg("Log", _msg);
             }
         }
         #endregion
@@ -83,18 +83,18 @@ namespace Qni {
             var _msg = LogPackaging(msg.ToString(), logConfig.enableTrace);
             lock (QNI_LOGGER_LOCK) {
                 logger.Log(_msg, color);
-                WriteLogMsgToLocal("Log", _msg);
+                CacheLogMsg("Log", _msg);
             }
         }
 
-        public static void LogColor (ELogColor color, string msg, params object[] args) {
+        public static void LogColor (ELogColor color, string format, params object[] args) {
             if (!Enable) {
                 return;
             }
-            var _msg = LogPackaging(string.Format(msg, args), logConfig.enableTrace);
+            var _msg = LogPackaging(string.Format(format, args), logConfig.enableTrace);
             lock (QNI_LOGGER_LOCK) {
                 logger.Log(_msg, color);
-                WriteLogMsgToLocal("Log", _msg);
+                CacheLogMsg("Log", _msg);
             }
         }
 
@@ -114,23 +114,23 @@ namespace Qni {
             var _msg = LogPackaging(msg.ToString(), true);
             lock (QNI_LOGGER_LOCK) {
                 logger.Log(_msg, ELogColor.Magenta);
-                WriteLogMsgToLocal("Trace", _msg);
+                CacheLogMsg("Trace", _msg);
             }
         }
 
         /// <summary>
         /// print log with trace info.
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="format"></param>
         /// <param name="args"></param>
-        public static void LogTrace (string msg, params object[] args) {
+        public static void LogTrace (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
-            var _msg = LogPackaging(string.Format(msg, args), true);
+            var _msg = LogPackaging(string.Format(format, args), true);
             lock (QNI_LOGGER_LOCK) {
                 logger.Log(_msg, ELogColor.Magenta);
-                WriteLogMsgToLocal("Trace", _msg);
+                CacheLogMsg("Trace", _msg);
             }
         }
 
@@ -146,19 +146,19 @@ namespace Qni {
             var _msg = LogPackaging(msg.ToString(), logConfig.enableTrace);
             lock (QNI_LOGGER_LOCK) {
                 logger.LogWarning(_msg);
-                WriteLogMsgToLocal("Warning", _msg);
+                CacheLogMsg("Warning", _msg);
 
             }
         }
 
-        public static void LogWarning (string msg, params object[] args) {
+        public static void LogWarning (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
-            var _msg = LogPackaging(string.Format(msg, args), logConfig.enableTrace);
+            var _msg = LogPackaging(string.Format(format, args), logConfig.enableTrace);
             lock (QNI_LOGGER_LOCK) {
                 logger.LogWarning(_msg);
-                WriteLogMsgToLocal("Warning", _msg);
+                CacheLogMsg("Warning", _msg);
             }
         }
         #endregion
@@ -172,18 +172,18 @@ namespace Qni {
             var _msg = LogPackaging(msg.ToString(), true);
             lock (QNI_LOGGER_LOCK) {
                 logger.LogError(_msg);
-                WriteLogMsgToLocal("Error", _msg);
+                CacheLogMsg("Error", _msg);
 
             }
         }
-        public static void LogError (string msg, params object[] args) {
+        public static void LogError (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
-            var _msg = LogPackaging(string.Format(msg, args), true);
+            var _msg = LogPackaging(string.Format(format, args), true);
             lock (QNI_LOGGER_LOCK) {
                 logger.LogError(_msg);
-                WriteLogMsgToLocal("Error", _msg);
+                CacheLogMsg("Error", _msg);
             }
         }
         #endregion
@@ -220,7 +220,7 @@ namespace Qni {
 
 
 
-        private static void WriteLogMsgToLocal (string label, string msg) {
+        private static void CacheLogMsg(string label, string msg) {
             if (logConfig.enableCache) {
                 logWriter.Write(string.Format("[{0}] {1}", label, msg));
             }
@@ -228,14 +228,14 @@ namespace Qni {
 
 
         private static string LogPackaging (string msg, bool isTrace = false) {
-            StringBuilder sb = new StringBuilder(logConfig.logPrefix, 100);
+            StringBuilder sb = new StringBuilder(logConfig.logPrefix, 500);
             if (logConfig.enableTime) {
                 TimeZoneInfo currentTimeZone = TimeZoneInfo.Local;
                 if (logConfig.enableUTCTime) {
-                    sb.AppendFormat(" {0}(UTC,{1},{2})", DateTime.UtcNow.ToString("yyyy.MM.dd.HH:mm:ss.fff"), currentTimeZone.BaseUtcOffset, currentTimeZone.Id);
+                    sb.AppendFormat(" [{0}(UTC,{1},{2})]", DateTime.UtcNow.ToString("yyyy.MM.dd.HH:mm:ss.fff"), currentTimeZone.BaseUtcOffset, currentTimeZone.Id);
                 }
                 else {
-                    sb.AppendFormat(" {0}({1})", DateTime.Now.ToString("yyyy.MM.dd.HH:mm:ss.fff"), currentTimeZone.Id);
+                    sb.AppendFormat(" [{0}({1})]", DateTime.Now.ToString("yyyy.MM.dd.HH:mm:ss.fff"), currentTimeZone.Id);
                 }
             }
 
@@ -243,13 +243,18 @@ namespace Qni {
                 sb.AppendFormat(" {0}", GetThreadID());
             }
 
-            sb.AppendFormat(" {0} {1}", logConfig.logSeparator, msg);
-
-            if (isTrace) {
-                sb.AppendFormat("\nStackTrace:{0}", GetLogTraceInfo());
+            if (!string.IsNullOrEmpty(logConfig.logSeparator)) {
+                sb.AppendFormat(" {0} ", logConfig.logSeparator);
             }
 
-            sb.AppendLine();
+            sb.Append(msg);
+
+            if (isTrace) {
+                sb.Append("\n");
+                sb.AppendFormat("[StackTrace]:{0}", GetLogTraceInfo());
+            }
+
+            sb.Append("\n");
             return sb.ToString();
         }
 
@@ -259,12 +264,13 @@ namespace Qni {
 
         private static string GetLogTraceInfo () {
             StackTrace st = new StackTrace(3, true);//skip 3 frames
-            string traceInfo = "";
+            StringBuilder sb = new StringBuilder();
+
             for (int i = 0; i < st.FrameCount; i++) {
                 StackFrame sf = st.GetFrame(i);
-                traceInfo += string.Format("\n{0}::{1} Line:{2}", sf.GetFileName(), sf.GetMethod(), sf.GetFileLineNumber());
+                sb.AppendFormat("\n{0}::{1}, Line:{2}", sf.GetFileName(), sf.GetMethod(), sf.GetFileLineNumber());
             }
-            return traceInfo;
+            return sb.ToString();
         }
     }
 }

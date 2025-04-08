@@ -2,7 +2,7 @@
 using System.IO;
 
 namespace Qni {
-    public class LogWriter {
+    internal class LogWriter {
 
         private StreamWriter fileWriter = null;
         private string cacheDir = "";
