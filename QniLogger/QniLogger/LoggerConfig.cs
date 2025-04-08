@@ -33,7 +33,7 @@ namespace Qni {
 
 
         public string logPrefix = "";
-        public string logSeparator = "";
+        public string logSeparator = ">";
         public string cacheFileDir = "";
         public string cacheFileName = "log.txt";
 
