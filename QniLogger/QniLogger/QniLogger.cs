@@ -62,7 +62,7 @@ namespace Qni {
             }
         }
 
-        public static void Log (string format, params object[] args) {
+        public static void LogFormat (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
@@ -87,7 +87,7 @@ namespace Qni {
             }
         }
 
-        public static void LogColor (ELogColor color, string format, params object[] args) {
+        public static void LogColorFormat (ELogColor color, string format, params object[] args) {
             if (!Enable) {
                 return;
             }
@@ -123,7 +123,7 @@ namespace Qni {
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public static void LogTrace (string format, params object[] args) {
+        public static void LogTraceFormat (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
@@ -151,7 +151,7 @@ namespace Qni {
             }
         }
 
-        public static void LogWarning (string format, params object[] args) {
+        public static void LogWarningFormat (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
@@ -176,7 +176,7 @@ namespace Qni {
 
             }
         }
-        public static void LogError (string format, params object[] args) {
+        public static void LogErrorFormat (string format, params object[] args) {
             if (!Enable) {
                 return;
             }
@@ -204,7 +204,7 @@ namespace Qni {
                 printer(stringBuilder.ToString());
             }
             else {
-                Log(stringBuilder.ToString());
+                LogFormat(stringBuilder.ToString());
             }
         }
 
